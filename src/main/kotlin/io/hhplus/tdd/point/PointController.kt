@@ -6,7 +6,9 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/point")
-class PointController {
+class PointController(
+    private val pointService: PointService
+) {
     private val logger: Logger = LoggerFactory.getLogger(javaClass)
 
     /**
@@ -37,7 +39,7 @@ class PointController {
         @PathVariable id: Long,
         @RequestBody amount: Long,
     ): UserPoint {
-        return UserPoint(1L, 100, 0)
+        return pointService.charge(id, amount)
     }
 
     /**

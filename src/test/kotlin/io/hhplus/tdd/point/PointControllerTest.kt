@@ -1,7 +1,6 @@
 package io.hhplus.tdd.point
 
-import org.assertj.core.api.Assertions
-import org.assertj.core.api.Assertions.*
+import org.assertj.core.api.Assertions.assertThat
 import org.json.JSONObject
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -11,7 +10,6 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import java.nio.charset.StandardCharsets
 
 @SpringBootTest
@@ -22,8 +20,8 @@ class PointControllerTest (
 ){
 
     @Test
-    @DisplayName("충전하기")
-    fun testGetIntroductions() {
+    @DisplayName("1.충전하기 - 1")
+    fun testPointCharge() {
 
         // given
         val uri = "/point/1/charge"
@@ -44,6 +42,32 @@ class PointControllerTest (
         val point = jsonResponse.getLong("point")
 
         assertThat(id).isEqualTo(1L)
+        assertThat(point).isEqualTo(amount)
+    }
+
+    @Test
+    @DisplayName("1.충전하기 - 2")
+    fun testPointCharge2() {
+
+        // given
+        val uri = "/point/2/charge"
+        val amount = 200L
+
+        // when
+        val mvcResult = mockMvc.perform(
+            MockMvcRequestBuilders.patch(uri)
+                .content(amount.toString())
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andReturn()
+        val contentAsString = mvcResult.response.getContentAsString(StandardCharsets.UTF_8)
+
+
+        // then
+        val jsonResponse = JSONObject(contentAsString)
+        val id = jsonResponse.getLong("id")
+        val point = jsonResponse.getLong("point")
+
+        assertThat(id).isEqualTo(2L)
         assertThat(point).isEqualTo(amount)
     }
 }
