@@ -9,6 +9,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.MvcResult
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import java.nio.charset.StandardCharsets
 
@@ -19,6 +20,14 @@ class PointControllerTest (
     @Autowired private val mockMvc: MockMvc
 ){
 
+    private fun performPatch(uri: String, amount: Long): MvcResult {
+        return mockMvc
+            .perform(MockMvcRequestBuilders.patch(uri)
+                .content(amount.toString())
+                .contentType(MediaType.APPLICATION_JSON))
+            .andReturn()
+    }
+
     @Test
     @DisplayName("1.충전하기 - 1")
     fun testPointCharge() {
@@ -28,13 +37,8 @@ class PointControllerTest (
         val amount = 100L
 
         // when
-        val mvcResult = mockMvc.perform(
-            MockMvcRequestBuilders.patch(uri)
-                .content(amount.toString())
-                .contentType(MediaType.APPLICATION_JSON)
-        ).andReturn()
+        val mvcResult = performPatch(uri, amount)
         val contentAsString = mvcResult.response.getContentAsString(StandardCharsets.UTF_8)
-
 
         // then
         val jsonResponse = JSONObject(contentAsString)
@@ -54,13 +58,8 @@ class PointControllerTest (
         val amount = 200L
 
         // when
-        val mvcResult = mockMvc.perform(
-            MockMvcRequestBuilders.patch(uri)
-                .content(amount.toString())
-                .contentType(MediaType.APPLICATION_JSON)
-        ).andReturn()
+        val mvcResult = performPatch(uri, amount)
         val contentAsString = mvcResult.response.getContentAsString(StandardCharsets.UTF_8)
-
 
         // then
         val jsonResponse = JSONObject(contentAsString)
@@ -70,4 +69,5 @@ class PointControllerTest (
         assertThat(id).isEqualTo(2L)
         assertThat(point).isEqualTo(amount)
     }
+
 }
