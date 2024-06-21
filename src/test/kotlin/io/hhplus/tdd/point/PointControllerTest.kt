@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.MvcResult
@@ -39,8 +40,11 @@ class PointControllerTest (
         // when
         val mvcResult = performPatch(uri, amount)
         val contentAsString = mvcResult.response.getContentAsString(StandardCharsets.UTF_8)
+        val status = mvcResult.response.status
 
         // then
+        assertThat(status).isEqualTo(HttpStatus.OK.value())
+
         val jsonResponse = JSONObject(contentAsString)
         val id = jsonResponse.getLong("id")
         val point = jsonResponse.getLong("point")
@@ -60,8 +64,11 @@ class PointControllerTest (
         // when
         val mvcResult = performPatch(uri, amount)
         val contentAsString = mvcResult.response.getContentAsString(StandardCharsets.UTF_8)
+        val status = mvcResult.response.status
 
         // then
+        assertThat(status).isEqualTo(HttpStatus.OK.value())
+
         val jsonResponse = JSONObject(contentAsString)
         val id = jsonResponse.getLong("id")
         val point = jsonResponse.getLong("point")
