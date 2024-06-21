@@ -153,4 +153,20 @@ class PointServiceTest() {
         assertThat(afterUserPoint.point).isEqualTo(amountToCharge - amountToUse)
     }
 
+    @DisplayName("잔고와 동일한 금액 사용")
+    @Test
+    fun testNine() {
+        // given
+        val userId = Random.nextLong(from = 1, until = 5000)
+        val amountToCharge = 5000L
+        val beforeUserPoint = pointService.charge(userId, amountToCharge)
+
+        // when
+        val afterUserPoint = pointService.use(userId, amountToCharge)
+
+        // then
+        assertThat(beforeUserPoint.point).isEqualTo(amountToCharge)
+        assertThat(afterUserPoint.point).isEqualTo(0L)
+    }
+
 }
