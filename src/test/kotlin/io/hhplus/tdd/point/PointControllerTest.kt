@@ -1,6 +1,7 @@
 package io.hhplus.tdd.point
 
 import org.assertj.core.api.Assertions.assertThat
+import org.json.JSONArray
 import org.json.JSONObject
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -278,5 +279,26 @@ class PointControllerTest (
         assertThat(status).isEqualTo(HttpStatus.OK.value())
         assertThat(JSONObject(contentAsString).getLong("id")).isEqualTo(id)
         assertThat(JSONObject(contentAsString).getLong("point")).isEqualTo(chargeAmount - useAmount) // 남은 금액
+    }
+
+    /**
+     * 4. 포인트 내역 (pointHistory)
+     * */
+    @DisplayName("4. 포인트 내역 - 내역이 아무것도 없을 때는 - emptyList()")
+    @Test
+    fun testTwelve() {
+        // given
+        val id = Random.nextLong(from = 1, until = 5000)
+        val uri = "/point/${id}/histories"
+
+        // when
+        val mvcResult = performGet(uri)
+        val contentAsString = mvcResult.response.getContentAsString(StandardCharsets.UTF_8)
+        val status = mvcResult.response.status
+
+        // then
+        assertThat(status).isEqualTo(HttpStatus.OK.value())
+        val jsonArray = JSONArray(contentAsString)
+        assertThat(jsonArray.length()).isEqualTo(0) // emptyList() 검증
     }
 }
