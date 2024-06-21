@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.MvcResult
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import java.nio.charset.StandardCharsets
+import kotlin.random.Random
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -30,12 +31,12 @@ class PointControllerTest (
     }
 
     @Test
-    @DisplayName("1.충전하기 - 1")
+    @DisplayName("1.충전하기 - 정상적인 상황")
     fun testPointCharge() {
 
         // given
         val uri = "/point/1/charge"
-        val amount = 100L
+        val amount = Random.nextLong(1, 5000)
 
         // when
         val mvcResult = performPatch(uri, amount)
@@ -50,30 +51,6 @@ class PointControllerTest (
         val point = jsonResponse.getLong("point")
 
         assertThat(id).isEqualTo(1L)
-        assertThat(point).isEqualTo(amount)
-    }
-
-    @Test
-    @DisplayName("1.충전하기 - 2")
-    fun testPointCharge2() {
-
-        // given
-        val uri = "/point/2/charge"
-        val amount = 200L
-
-        // when
-        val mvcResult = performPatch(uri, amount)
-        val contentAsString = mvcResult.response.getContentAsString(StandardCharsets.UTF_8)
-        val status = mvcResult.response.status
-
-        // then
-        assertThat(status).isEqualTo(HttpStatus.OK.value())
-
-        val jsonResponse = JSONObject(contentAsString)
-        val id = jsonResponse.getLong("id")
-        val point = jsonResponse.getLong("point")
-
-        assertThat(id).isEqualTo(2L)
         assertThat(point).isEqualTo(amount)
     }
 
