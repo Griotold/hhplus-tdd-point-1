@@ -13,8 +13,8 @@ class PointService(
         if (userId < 0) throw IllegalArgumentException()
         if (amount < 0) throw IllegalArgumentException()
 
-        val pointHistory =
-            pointHistoryRepository.insert(id = userId, amount = amount, TransactionType.CHARGE, System.currentTimeMillis())
+        // 거래내역 저장
+        pointHistoryRepository.insert(id = userId, amount = amount, TransactionType.CHARGE, System.currentTimeMillis())
 
         // userPoint 도 넣어주고
         val beforeUserPoint = userPointRepository.selectById(userId)

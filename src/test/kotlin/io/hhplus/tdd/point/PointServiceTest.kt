@@ -99,4 +99,20 @@ class PointServiceTest() {
         // then
         assertThat(userPoint2.point).isEqualTo(amount + amount2)
     }
+
+    @DisplayName("충전 후 거래 내역이 저장된다")
+    @Test
+    fun testSeven() {
+        // given
+        val userId = 1L
+        val amount = Random.nextLong(from = 1, until = 5000)
+
+        // when
+        pointService.charge(userId, amount)
+
+        // then
+        val histories = pointHistoryRepository.selectAllByUserId(userId)
+        assertThat(histories).isNotEmpty
+        assertThat(histories.last().amount).isEqualTo(amount)
+    }
 }
