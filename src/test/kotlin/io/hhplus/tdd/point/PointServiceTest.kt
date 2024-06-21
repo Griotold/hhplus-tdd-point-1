@@ -136,4 +136,21 @@ class PointServiceTest() {
 
     }
 
+    @DisplayName("잔고가 있을 때 정상적인 사용")
+    @Test
+    fun testEight() {
+        // given
+        val userId = Random.nextLong(from = 1, until = 5000)
+        val amountToCharge = 5000L
+        val amountToUse = 3000L
+        val beforeUserPoint = pointService.charge(userId, amountToCharge)
+
+        // when
+        val afterUserPoint = pointService.use(userId, amountToUse)
+
+        // then
+        assertThat(beforeUserPoint.point).isEqualTo(amountToCharge)
+        assertThat(afterUserPoint.point).isEqualTo(amountToCharge - amountToUse)
+    }
+
 }

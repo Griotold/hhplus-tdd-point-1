@@ -30,7 +30,15 @@ class PointService(
         val userPoint = userPointRepository.selectById(userId)
         if (userPoint.point < amount) throw InsufficientBalanceException()
 
-        return UserPoint(id = 0, point = 0, updateMillis = 0)
+        // 거래내역 저장
+        pointHistoryRepository.insert(id = userId, amount = amount, TransactionType.USE, System.currentTimeMillis())
+
+        // userPoint 에서 차감
+        val afterUserPoint = userPointRepository.insertOrUpdate(id = userId, amount = userPoint.point - amount)
+
+        return UserPoint(id = afterUserPoint.id,
+            point = afterUserPoint.point,
+            updateMillis = afterUserPoint.updateMillis)
     }
 
 }
