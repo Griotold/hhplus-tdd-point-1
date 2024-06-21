@@ -137,5 +137,23 @@ class PointControllerTest (
         assertThat(JSONObject(contentAsString).getLong("point")).isEqualTo(chargeAmount - useAmount)
     }
 
+    @DisplayName("2. 사용하기 - 음수 금액 사용 시도 시 400 에러")
+    @Test
+    fun testSix() {
+        // given
+        val id = Random.nextLong(from = 1, until = 5000)
+        val uri = "/point/$id/use"
+        val amount = Random.nextLong(from = -5000, until = -1)
+
+        // when
+        val mvcResult = performPatch(uri, amount)
+        val contentAsString = mvcResult.response.getContentAsString(StandardCharsets.UTF_8)
+        val status = mvcResult.response.status
+
+        // then
+        assertThat(status).isEqualTo(HttpStatus.BAD_REQUEST.value())
+        assertThat(JSONObject(contentAsString).getString("message")).isEqualTo("충전량은 양수여야 합니다.")
+    }
+
 
 }
