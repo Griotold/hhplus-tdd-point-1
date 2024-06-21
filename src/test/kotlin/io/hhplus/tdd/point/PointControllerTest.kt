@@ -226,7 +226,7 @@ class PointControllerTest (
         // then
         assertThat(status).isEqualTo(HttpStatus.OK.value())
         assertThat(JSONObject(contentAsString).getLong("id")).isEqualTo(id)
-        assertThat(JSONObject(contentAsString).getLong("point")).isEqualTo(5000L)
+        assertThat(JSONObject(contentAsString).getLong("point")).isEqualTo(chargeAmount) // 충전한 만큼
     }
 
     @DisplayName("3. 포인트 조회 - 충전을 두 번 하고 조회하면 모두 더한 만큼 조회")
@@ -251,6 +251,32 @@ class PointControllerTest (
         // then
         assertThat(status).isEqualTo(HttpStatus.OK.value())
         assertThat(JSONObject(contentAsString).getLong("id")).isEqualTo(id)
-        assertThat(JSONObject(contentAsString).getLong("point")).isEqualTo(8000L) // 더한 만큼
+        assertThat(JSONObject(contentAsString).getLong("point")).isEqualTo(chargeAmount + chargeAmount2) // 더한 만큼
+    }
+
+    @DisplayName("3. 포인트 조회 - 충전 한 번하고 사용 한 번하고 남은 금액이 제대로 나오는지 테스트")
+    @Test
+    fun testEleven() {
+        // given
+        val id = Random.nextLong(from = 1, until = 5000)
+        val chargeUri = "/point/${id}/charge"
+        val useUri = "/point/${id}/use"
+        val uri = "/point/${id}"
+        val chargeAmount = 5000L
+        val useAmount = 1500L
+
+        // 한 번 충전하고 두 번 충전하고
+        performPatch(chargeUri, chargeAmount)
+        performPatch(useUri, useAmount)
+
+        // when
+        val mvcResult = performGet(uri)
+        val contentAsString = mvcResult.response.getContentAsString(StandardCharsets.UTF_8)
+        val status = mvcResult.response.status
+
+        // then
+        assertThat(status).isEqualTo(HttpStatus.OK.value())
+        assertThat(JSONObject(contentAsString).getLong("id")).isEqualTo(id)
+        assertThat(JSONObject(contentAsString).getLong("point")).isEqualTo(chargeAmount - useAmount) // 남은 금액
     }
 }
