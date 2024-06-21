@@ -17,9 +17,13 @@ class PointService(
             pointHistoryRepository.insert(id = userId, amount = amount, TransactionType.CHARGE, System.currentTimeMillis())
 
         // userPoint 도 넣어주고
-        userPointRepository.insertOrUpdate(id = userId, amount = amount)
+        val beforeUserPoint = userPointRepository.selectById(userId)
+        val afterUserPoint = userPointRepository.insertOrUpdate(id = userId, amount = amount + beforeUserPoint.point)
 
-        return UserPoint(id = pointHistory.userId, point = pointHistory.amount, updateMillis = pointHistory.timeMillis)
+        return UserPoint(id = afterUserPoint.id,
+            point = afterUserPoint.point,
+            updateMillis = afterUserPoint.updateMillis
+        )
     }
 
 }

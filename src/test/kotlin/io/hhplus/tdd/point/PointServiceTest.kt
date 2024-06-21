@@ -83,4 +83,20 @@ class PointServiceTest() {
         assertThat(userPoint.point).isEqualTo(amount)
         assertThat(userPoint.id).isEqualTo(userId)
     }
+
+    @DisplayName("두 번 충전 했다면 각각의 더한 값이 리턴된다.")
+    @Test
+    fun testFive() {
+        // given
+        val userId = 1L
+        val amount = Random.nextLong(from = 1, until = 5000)
+        val amount2 = Random.nextLong(from = 1, until = 5000)
+
+        // when
+        pointService.charge(userId, amount)
+        val userPoint2 = pointService.charge(userId, amount2) // 두 번 충전!
+
+        // then
+        assertThat(userPoint2.point).isEqualTo(amount + amount2)
+    }
 }
