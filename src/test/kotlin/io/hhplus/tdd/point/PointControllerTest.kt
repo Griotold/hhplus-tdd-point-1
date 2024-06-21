@@ -113,5 +113,29 @@ class PointControllerTest (
         assertThat(JSONObject(contentAsString).getString("message")).isEqualTo("잔고가 부족합니다.")
     }
 
+    @DisplayName("2. 사용하기 - 잔고 내에서 사용")
+    @Test
+    fun testFive() {
+        // given
+        val id = Random.nextLong(from = 1, until = 5000)
+        val chargeUri = "/point/${id}/charge"
+        val useUri = "/point/${id}/use"
+        val chargeAmount = 5000L
+        val useAmount = Random.nextLong(from = 1, until = 5000)
+
+        // 먼저 충전
+        performPatch(chargeUri, chargeAmount)
+
+        // when
+        val mvcResult = performPatch(useUri, useAmount)
+        val contentAsString = mvcResult.response.getContentAsString(StandardCharsets.UTF_8)
+        val status = mvcResult.response.status
+
+        // then
+        assertThat(status).isEqualTo(HttpStatus.OK.value())
+        assertThat(JSONObject(contentAsString).getLong("id")).isEqualTo(id)
+        assertThat(JSONObject(contentAsString).getLong("point")).isEqualTo(chargeAmount - useAmount)
+    }
+
 
 }
