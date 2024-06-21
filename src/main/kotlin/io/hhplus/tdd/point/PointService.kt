@@ -11,7 +11,7 @@ class PointService(
 ) {
     fun charge(userId: Long, amount: Long): UserPoint {
         if (userId < 0) throw InvalidUserIdException()
-        if (amount < 0) throw IllegalArgumentException()
+        if (amount < 0) throw InvalidAmountException()
 
         // 거래내역 저장
         pointHistoryRepository.insert(id = userId, amount = amount, TransactionType.CHARGE, System.currentTimeMillis())

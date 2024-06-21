@@ -57,7 +57,7 @@ class PointServiceTest() {
             .isInstanceOf(InvalidUserIdException::class.java)
     }
 
-    @DisplayName("amount가 음수이면 IllegalArgumentException")
+    @DisplayName("amount가 음수이면 InvalidAmountException")
     @Test
     fun testThree() {
         // given
@@ -66,7 +66,7 @@ class PointServiceTest() {
 
         // when & then
         assertThatThrownBy { pointService.charge(userId, amount) }
-            .isInstanceOf(IllegalArgumentException::class.java)
+            .isInstanceOf(InvalidAmountException::class.java)
     }
 
     @DisplayName("id도 양수이고 amount도 양수이면 충전이 된다.")
