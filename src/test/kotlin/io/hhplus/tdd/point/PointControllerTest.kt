@@ -35,7 +35,8 @@ class PointControllerTest (
     fun testPointCharge() {
 
         // given
-        val uri = "/point/1/charge"
+        val id = Random.nextLong(1, 1000)
+        val uri = "/point/${id}/charge"
         val amount = Random.nextLong(1, 5000)
 
         // when
@@ -46,12 +47,9 @@ class PointControllerTest (
         // then
         assertThat(status).isEqualTo(HttpStatus.OK.value())
 
-        val jsonResponse = JSONObject(contentAsString)
-        val id = jsonResponse.getLong("id")
-        val point = jsonResponse.getLong("point")
+        assertThat(JSONObject(contentAsString).getLong("id")).isEqualTo(id)
+        assertThat(JSONObject(contentAsString).getLong("point")).isEqualTo(amount)
 
-        assertThat(id).isEqualTo(1L)
-        assertThat(point).isEqualTo(amount)
     }
 
 }
