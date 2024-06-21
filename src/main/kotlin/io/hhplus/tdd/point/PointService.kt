@@ -42,4 +42,8 @@ class PointService(
             updateMillis = afterUserPoint.updateMillis)
     }
 
+    fun retrieve(id: Long): UserPoint {
+        return userPointRepository.selectById(id)
+    }
+
 }

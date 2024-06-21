@@ -31,6 +31,13 @@ class PointControllerTest (
             .andReturn()
     }
 
+    private fun performGet(uri: String): MvcResult {
+        return mockMvc
+            .perform(MockMvcRequestBuilders.get(uri)
+                .contentType(MediaType.APPLICATION_JSON))
+            .andReturn()
+    }
+
     /**
      * 1. 충전하기
      * */
@@ -176,6 +183,28 @@ class PointControllerTest (
         assertThat(status).isEqualTo(HttpStatus.OK.value())
         assertThat(JSONObject(contentAsString).getLong("id")).isEqualTo(id)
         assertThat(JSONObject(contentAsString).getLong("point")).isEqualTo(0L)
+    }
+
+    /**
+     * 3. 포인트 조회
+     * */
+    @DisplayName("3. 포인트 조회 - 충전을 안하고 조회하면 0원")
+    @Test
+    fun testEight() {
+        // given
+        val id = Random.nextLong(from = 1, until = 5000)
+        val uri = "/point/${id}"
+
+        // when
+        val mvcResult = performGet(uri)
+        val contentAsString = mvcResult.response.getContentAsString(StandardCharsets.UTF_8)
+        val status = mvcResult.response.status
+
+        // then
+        assertThat(status).isEqualTo(HttpStatus.OK.value())
+        assertThat(JSONObject(contentAsString).getLong("id")).isEqualTo(id)
+        assertThat(JSONObject(contentAsString).getLong("point")).isEqualTo(0L)
+
     }
 
 }

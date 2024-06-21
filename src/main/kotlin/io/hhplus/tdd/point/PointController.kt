@@ -18,7 +18,7 @@ class PointController(
     fun point(
         @PathVariable id: Long,
     ): UserPoint {
-        return UserPoint(0, 0, 0)
+        return pointService.retrieve(id)
     }
 
     /**
