@@ -4,6 +4,7 @@ import io.hhplus.tdd.database.PointHistoryFakeRepository
 import io.hhplus.tdd.database.PointHistoryRepository
 import io.hhplus.tdd.database.UserPointFakeRepository
 import io.hhplus.tdd.database.UserPointRepository
+import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -47,9 +48,11 @@ class PointServiceTest() {
             .isInstanceOf(IllegalArgumentException::class.java)
 
         // 예시 추가
+        // given
         val userId2 = -2L // 없는 id
         val amount2 = Random.nextLong(from = 1, until = 5000)
 
+        // when & then
         assertThatThrownBy { pointService.charge(userId2, amount2) }
             .isInstanceOf(IllegalArgumentException::class.java)
     }
@@ -61,8 +64,23 @@ class PointServiceTest() {
         val userId = 1L
         val amount = Random.nextLong(from = -5000, until = -1) // amount가 음수
 
-        // when
+        // when & then
         assertThatThrownBy { pointService.charge(userId, amount) }
             .isInstanceOf(IllegalArgumentException::class.java)
+    }
+
+    @DisplayName("id도 양수이고 amount도 양수이면 충전이 된다.")
+    @Test
+    fun testFour() {
+        // given
+        val userId = 1L
+        val amount = Random.nextLong(from = 1, until = 5000)
+
+        // when
+        val userPoint = pointService.charge(userId, amount)
+
+        // then
+        assertThat(userPoint.point).isEqualTo(amount)
+        assertThat(userPoint.id).isEqualTo(userId)
     }
 }
