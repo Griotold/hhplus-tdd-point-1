@@ -11,6 +11,7 @@ class PointService(
 ) {
     fun charge(userId: Long, amount: Long): UserPoint {
         if (userId < 0) throw IllegalArgumentException()
+        if (amount < 0) throw IllegalArgumentException()
 
         val pointHistory =
             pointHistoryRepository.insert(id = userId, amount = amount, TransactionType.CHARGE, System.currentTimeMillis())

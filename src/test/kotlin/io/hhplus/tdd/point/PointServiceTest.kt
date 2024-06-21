@@ -53,4 +53,16 @@ class PointServiceTest() {
         assertThatThrownBy { pointService.charge(userId2, amount2) }
             .isInstanceOf(IllegalArgumentException::class.java)
     }
+
+    @DisplayName("amount가 음수이면 IllegalArgumentException")
+    @Test
+    fun testThree() {
+        // given
+        val userId = 1L
+        val amount = Random.nextLong(from = -5000, until = -1) // amount가 음수
+
+        // when
+        assertThatThrownBy { pointService.charge(userId, amount) }
+            .isInstanceOf(IllegalArgumentException::class.java)
+    }
 }
