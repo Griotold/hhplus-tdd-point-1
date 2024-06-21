@@ -301,4 +301,29 @@ class PointControllerTest (
         val jsonArray = JSONArray(contentAsString)
         assertThat(jsonArray.length()).isEqualTo(0) // emptyList() 검증
     }
+
+    @DisplayName("4. 포인트 내역 - 한 번 충전하고 내역 확인")
+    @Test
+    fun testThirteen() {
+        // given
+        val id = Random.nextLong(from = 1, until = 5000)
+        val chargeUri = "/point/${id}/charge"
+        val chargeAmount = 5000L
+        val uri = "/point/${id}/histories"
+
+        // 먼저 충전
+        performPatch(chargeUri, chargeAmount)
+
+        // when
+        val mvcResult = performGet(uri)
+        val contentAsString = mvcResult.response.getContentAsString(StandardCharsets.UTF_8)
+        val status = mvcResult.response.status
+
+        // then
+        assertThat(status).isEqualTo(HttpStatus.OK.value())
+        val jsonArray = JSONArray(contentAsString)
+        assertThat(jsonArray.length()).isEqualTo(1) // 충전 한 번 했으니 내역은 1건
+        val jsonObject: JSONObject = jsonArray.getJSONObject(0)
+        assertThat(jsonObject.getString("type")).isEqualTo(TransactionType.CHARGE.name) // 충전의 enum type 은 CHARGE
+    }
 }

@@ -43,7 +43,11 @@ class PointService(
     }
 
     fun retrieve(id: Long): UserPoint {
-        return userPointRepository.selectById(id)
+        return userPointRepository.selectById(id = id)
+    }
+
+    fun getHistories(userId: Long): List<PointHistory> {
+        return pointHistoryRepository.selectAllByUserId(userId = userId)
     }
 
 }
