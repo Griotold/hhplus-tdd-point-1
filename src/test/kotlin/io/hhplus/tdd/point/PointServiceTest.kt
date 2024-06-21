@@ -169,4 +169,20 @@ class PointServiceTest() {
         assertThat(afterUserPoint.point).isEqualTo(0L)
     }
 
+    @DisplayName("두 번 사용하여 잔고 정확히 계산")
+    @Test
+    fun testTen() {
+        // given
+        val userId = Random.nextLong(from = 1, until = 5000)
+        val amountToCharge = 10000L
+        pointService.charge(userId, amountToCharge)
+
+        // when
+        pointService.use(userId, 3000L)
+        val afterFirstUse = pointService.use(userId, 2000L)
+
+        // then
+        assertThat(afterFirstUse.point).isEqualTo(5000L)
+    }
+
 }
