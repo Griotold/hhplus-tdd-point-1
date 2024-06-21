@@ -25,6 +25,10 @@ class PointServiceTest() {
         pointService = PointService(pointHistoryRepository, userPointRepository)
     }
 
+    /**
+     * charge 관련 테스트
+     * */
+
     // 코틀린은 null-safe 하기 때문에 null 처리를 해줄 필요가 없다.
     @DisplayName("포인트 정보가 없으면 충전이 실패한다")
     @Test
@@ -102,7 +106,7 @@ class PointServiceTest() {
 
     @DisplayName("충전 후 거래 내역이 저장된다")
     @Test
-    fun testSeven() {
+    fun testSix() {
         // given
         val userId = 1L
         val amount = Random.nextLong(from = 1, until = 5000)
@@ -115,4 +119,21 @@ class PointServiceTest() {
         assertThat(histories).isNotEmpty
         assertThat(histories.last().amount).isEqualTo(amount)
     }
+
+    /**
+     * use 관련 테스트
+     * */
+    @DisplayName("잔고 없이 사용하면 InsufficientBalanceException")
+    @Test
+    fun testSeven() {
+        // given
+        val userId = Random.nextLong(from = 1, until = 5000)
+        val amount = Random.nextLong(from = 1, until = 5000)
+
+        // when & then
+        assertThatThrownBy { pointService.use(userId, amount) }
+            .isInstanceOf(InsufficientBalanceException::class.java)
+
+    }
+
 }
