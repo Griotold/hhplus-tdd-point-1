@@ -30,10 +30,9 @@ class PointControllerTest (
             .andReturn()
     }
 
-    @Test
     @DisplayName("1.충전하기 - 정상적인 상황")
+    @Test
     fun testPointCharge() {
-
         // given
         val id = Random.nextLong(1, 1000)
         val uri = "/point/${id}/charge"
@@ -49,7 +48,25 @@ class PointControllerTest (
 
         assertThat(JSONObject(contentAsString).getLong("id")).isEqualTo(id)
         assertThat(JSONObject(contentAsString).getLong("point")).isEqualTo(amount)
-
     }
+
+    @DisplayName("1.충전하기 - id가 음수이면 400 에러")
+    @Test
+    fun testTwo() {
+        // given
+        val id = Random.nextLong(-5000, -1)
+        val uri = "/point/${id}/charge"
+        val amount = Random.nextLong(1, 5000)
+
+        // when
+        val mvcResult = performPatch(uri, amount)
+        val contentAsString = mvcResult.response.getContentAsString(StandardCharsets.UTF_8)
+        val status = mvcResult.response.status
+
+        // then
+        assertThat(status).isEqualTo(HttpStatus.BAD_REQUEST.value())
+    }
+
+
 
 }
