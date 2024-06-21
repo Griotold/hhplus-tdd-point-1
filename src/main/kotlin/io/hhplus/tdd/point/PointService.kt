@@ -2,6 +2,9 @@ package io.hhplus.tdd.point
 
 import io.hhplus.tdd.database.PointHistoryRepository
 import io.hhplus.tdd.database.UserPointRepository
+import io.hhplus.tdd.exception.InsufficientBalanceException
+import io.hhplus.tdd.exception.InvalidAmountException
+import io.hhplus.tdd.exception.InvalidUserIdException
 import org.springframework.stereotype.Service
 
 @Service

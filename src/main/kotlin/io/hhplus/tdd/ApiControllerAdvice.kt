@@ -1,8 +1,8 @@
 package io.hhplus.tdd
 
-import io.hhplus.tdd.point.InsufficientBalanceException
-import io.hhplus.tdd.point.InvalidAmountException
-import io.hhplus.tdd.point.InvalidUserIdException
+import io.hhplus.tdd.exception.InsufficientBalanceException
+import io.hhplus.tdd.exception.InvalidAmountException
+import io.hhplus.tdd.exception.InvalidUserIdException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus

@@ -4,6 +4,9 @@ import io.hhplus.tdd.database.PointHistoryFakeRepository
 import io.hhplus.tdd.database.PointHistoryRepository
 import io.hhplus.tdd.database.UserPointFakeRepository
 import io.hhplus.tdd.database.UserPointRepository
+import io.hhplus.tdd.exception.InsufficientBalanceException
+import io.hhplus.tdd.exception.InvalidAmountException
+import io.hhplus.tdd.exception.InvalidUserIdException
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
@@ -44,20 +47,11 @@ class PointServiceTest() {
     @Test
     fun testTwo() {
         // given
-        val userId = -1L // 없는 id
+        val userId = Random.nextLong(from = -5000, until = -1) // 없는 id
         val amount = Random.nextLong(from = 1, until = 5000)
 
         // when & then
         assertThatThrownBy { pointService.charge(userId, amount) }
-            .isInstanceOf(InvalidUserIdException::class.java)
-
-        // 예시 추가
-        // given
-        val userId2 = -2L // 없는 id
-        val amount2 = Random.nextLong(from = 1, until = 5000)
-
-        // when & then
-        assertThatThrownBy { pointService.charge(userId2, amount2) }
             .isInstanceOf(InvalidUserIdException::class.java)
     }
 
@@ -65,7 +59,7 @@ class PointServiceTest() {
     @Test
     fun testThree() {
         // given
-        val userId = 1L
+        val userId = Random.nextLong(from = 1, until = 5000)
         val amount = Random.nextLong(from = -5000, until = -1) // amount가 음수
 
         // when & then
@@ -77,7 +71,7 @@ class PointServiceTest() {
     @Test
     fun testFour() {
         // given
-        val userId = 1L
+        val userId = Random.nextLong(from = 1, until = 5000)
         val amount = Random.nextLong(from = 1, until = 5000)
 
         // when
@@ -92,7 +86,7 @@ class PointServiceTest() {
     @Test
     fun testFive() {
         // given
-        val userId = 1L
+        val userId = Random.nextLong(from = 1, until = 5000)
         val amount = Random.nextLong(from = 1, until = 5000)
         val amount2 = Random.nextLong(from = 1, until = 5000)
 
@@ -108,7 +102,7 @@ class PointServiceTest() {
     @Test
     fun testSix() {
         // given
-        val userId = 1L
+        val userId = Random.nextLong(from = 1, until = 5000)
         val amount = Random.nextLong(from = 1, until = 5000)
 
         // when
@@ -175,14 +169,16 @@ class PointServiceTest() {
         // given
         val userId = Random.nextLong(from = 1, until = 5000)
         val amountToCharge = 10000L
+        val firstUseAmount = 3000L
+        val secondUseAmount = 2000L
         pointService.charge(userId, amountToCharge)
 
         // when
-        pointService.use(userId, 3000L)
-        val afterFirstUse = pointService.use(userId, 2000L)
+        pointService.use(userId, firstUseAmount)
+        val afterUserPoint = pointService.use(userId, secondUseAmount)
 
         // then
-        assertThat(afterFirstUse.point).isEqualTo(5000L)
+        assertThat(afterUserPoint.point).isEqualTo(amountToCharge - firstUseAmount - secondUseAmount)
     }
 
     @DisplayName("음수 금액 사용 시도 시 InvalidAmountException")
