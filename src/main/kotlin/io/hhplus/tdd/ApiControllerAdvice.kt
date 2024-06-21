@@ -1,5 +1,7 @@
 package io.hhplus.tdd
 
+import io.hhplus.tdd.point.InvalidAmountException
+import io.hhplus.tdd.point.InvalidUserIdException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
@@ -14,10 +16,18 @@ data class ErrorResponse(val code: String, val message: String)
 class ApiControllerAdvice : ResponseEntityExceptionHandler() {
     private val logger: Logger = LoggerFactory.getLogger(javaClass)
 
-    @ExceptionHandler(IllegalArgumentException::class)
-    fun handleIllegalArgumentException(e: IllegalArgumentException): ResponseEntity<ErrorResponse> {
+    @ExceptionHandler(InvalidUserIdException::class)
+    fun handleInvalidUserIdException(e: InvalidUserIdException): ResponseEntity<ErrorResponse> {
         return ResponseEntity(
-            ErrorResponse("400", "잘못된 입력값입니다."),
+            ErrorResponse("400", "없는 유저 ID 입니다."),
+            HttpStatus.BAD_REQUEST,
+        )
+    }
+
+    @ExceptionHandler(InvalidAmountException::class)
+    fun handleInvalidAmountException(e: InvalidAmountException): ResponseEntity<ErrorResponse> {
+        return ResponseEntity(
+            ErrorResponse("400", "충전량은 양수여야 합니다."),
             HttpStatus.BAD_REQUEST,
         )
     }

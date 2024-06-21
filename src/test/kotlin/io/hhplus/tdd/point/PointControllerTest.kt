@@ -60,10 +60,12 @@ class PointControllerTest (
 
         // when
         val mvcResult = performPatch(uri, amount)
+        val contentAsString = mvcResult.response.getContentAsString(StandardCharsets.UTF_8)
         val status = mvcResult.response.status
 
         // then
         assertThat(status).isEqualTo(HttpStatus.BAD_REQUEST.value())
+        assertThat(JSONObject(contentAsString).getString("message")).isEqualTo("없는 유저 ID 입니다.")
     }
 
     @DisplayName("1.충전하기 - amount가 음수이면 400 에러")
@@ -76,10 +78,13 @@ class PointControllerTest (
 
         // when
         val mvcResult = performPatch(uri, amount)
+        val contentAsString = mvcResult.response.getContentAsString(StandardCharsets.UTF_8)
         val status = mvcResult.response.status
 
         // then
         assertThat(status).isEqualTo(HttpStatus.BAD_REQUEST.value())
+        assertThat(JSONObject(contentAsString).getString("message")).isEqualTo("충전량은 양수여야 합니다.")
+
     }
 
 
