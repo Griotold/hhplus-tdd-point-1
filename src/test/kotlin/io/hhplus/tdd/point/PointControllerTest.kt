@@ -142,7 +142,7 @@ class PointControllerTest (
     fun testSix() {
         // given
         val id = Random.nextLong(from = 1, until = 5000)
-        val uri = "/point/$id/use"
+        val uri = "/point/${id}/use"
         val amount = Random.nextLong(from = -5000, until = -1)
 
         // when
@@ -155,5 +155,27 @@ class PointControllerTest (
         assertThat(JSONObject(contentAsString).getString("message")).isEqualTo("충전량은 양수여야 합니다.")
     }
 
+    @DisplayName("2. 사용하기 - 잔고와 동일한 금액 사용")
+    @Test
+    fun testSeven() {
+        // given
+        val id = Random.nextLong(from = 1, until = 5000)
+        val chargeUri = "/point/${id}/charge"
+        val useUri = "/point/${id}/use"
+        val chargeAmount = 5000L
+
+        // 먼저 충전
+        performPatch(chargeUri, chargeAmount)
+
+        // when
+        val mvcResult = performPatch(useUri, chargeAmount)
+        val contentAsString = mvcResult.response.getContentAsString(StandardCharsets.UTF_8)
+        val status = mvcResult.response.status
+
+        // then
+        assertThat(status).isEqualTo(HttpStatus.OK.value())
+        assertThat(JSONObject(contentAsString).getLong("id")).isEqualTo(id)
+        assertThat(JSONObject(contentAsString).getLong("point")).isEqualTo(0L)
+    }
 
 }
