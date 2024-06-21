@@ -185,4 +185,17 @@ class PointServiceTest() {
         assertThat(afterFirstUse.point).isEqualTo(5000L)
     }
 
+    @DisplayName("음수 금액 사용 시도 시 InvalidAmountException")
+    @Test
+    fun testEleven() {
+        // given
+        val userId = Random.nextLong(from = 1, until = 5000)
+        val amountToCharge = 5000L
+        pointService.charge(userId, amountToCharge)
+
+        // when & then
+        assertThatThrownBy { pointService.use(userId, -1000L) }
+            .isInstanceOf(InvalidAmountException::class.java)
+    }
+
 }
