@@ -198,4 +198,23 @@ class PointServiceTest() {
             .isInstanceOf(InvalidAmountException::class.java)
     }
 
+    @DisplayName("사용 후 거래 내역 저장")
+    @Test
+    fun testTwelve() {
+        // given
+        val userId = Random.nextLong(from = 1, until = 5000)
+        val amountToCharge = 5000L
+        val amountToUse = 3000L
+        pointService.charge(userId, amountToCharge)
+
+        // when
+        pointService.use(userId, amountToUse)
+
+        // then
+        val histories = pointHistoryRepository.selectAllByUserId(userId)
+        assertThat(histories).isNotEmpty
+        assertThat(histories.last().amount).isEqualTo(amountToUse)
+        assertThat(histories.last().type).isEqualTo(TransactionType.USE)
+    }
+
 }
