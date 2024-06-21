@@ -35,7 +35,7 @@ class PointServiceTest() {
         // then
     }
 
-    @DisplayName("id가 없으면 IllegalArgumentException")
+    @DisplayName("id가 음수이면 IllegalArgumentException")
     @Test
     fun testTwo() {
         // given
@@ -44,6 +44,13 @@ class PointServiceTest() {
 
         // when & then
         assertThatThrownBy { pointService.charge(userId, amount) }
+            .isInstanceOf(IllegalArgumentException::class.java)
+
+        // 예시 추가
+        val userId2 = -2L // 없는 id
+        val amount2 = Random.nextLong(from = 1, until = 5000)
+
+        assertThatThrownBy { pointService.charge(userId2, amount2) }
             .isInstanceOf(IllegalArgumentException::class.java)
     }
 }

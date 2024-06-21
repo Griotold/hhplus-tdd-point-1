@@ -2,7 +2,6 @@ package io.hhplus.tdd.point
 
 import io.hhplus.tdd.database.PointHistoryRepository
 import io.hhplus.tdd.database.UserPointRepository
-import io.hhplus.tdd.database.UserPointTable
 import org.springframework.stereotype.Service
 
 @Service
@@ -11,7 +10,7 @@ class PointService(
     private val userPointRepository: UserPointRepository
 ) {
     fun charge(userId: Long, amount: Long): UserPoint {
-        if (userId == -1L) throw IllegalArgumentException()
+        if (userId < 0) throw IllegalArgumentException()
 
         val pointHistory =
             pointHistoryRepository.insert(id = userId, amount = amount, TransactionType.CHARGE, System.currentTimeMillis())
