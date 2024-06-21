@@ -10,7 +10,7 @@ class PointService(
     private val userPointRepository: UserPointRepository
 ) {
     fun charge(userId: Long, amount: Long): UserPoint {
-        if (userId < 0) throw IllegalArgumentException()
+        if (userId < 0) throw InvalidUserIdException()
         if (amount < 0) throw IllegalArgumentException()
 
         // 거래내역 저장

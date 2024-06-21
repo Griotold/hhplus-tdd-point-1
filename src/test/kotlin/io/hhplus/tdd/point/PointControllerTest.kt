@@ -34,9 +34,9 @@ class PointControllerTest (
     @Test
     fun testPointCharge() {
         // given
-        val id = Random.nextLong(1, 1000)
+        val id = Random.nextLong(from = 1, until = 1000)
         val uri = "/point/${id}/charge"
-        val amount = Random.nextLong(1, 5000)
+        val amount = Random.nextLong(from = 1, until = 5000)
 
         // when
         val mvcResult = performPatch(uri, amount)
@@ -54,13 +54,28 @@ class PointControllerTest (
     @Test
     fun testTwo() {
         // given
-        val id = Random.nextLong(-5000, -1)
+        val id = Random.nextLong(from = -5000, until = -1)
         val uri = "/point/${id}/charge"
-        val amount = Random.nextLong(1, 5000)
+        val amount = Random.nextLong(from = 1, until = 5000)
 
         // when
         val mvcResult = performPatch(uri, amount)
-        val contentAsString = mvcResult.response.getContentAsString(StandardCharsets.UTF_8)
+        val status = mvcResult.response.status
+
+        // then
+        assertThat(status).isEqualTo(HttpStatus.BAD_REQUEST.value())
+    }
+
+    @DisplayName("1.충전하기 - amount가 음수이면 400 에러")
+    @Test
+    fun testThree() {
+        // given
+        val id = Random.nextLong(from = 1, until = 5000)
+        val uri = "/point/${id}/charge"
+        val amount = Random.nextLong(from = -5000, until = -1)
+
+        // when
+        val mvcResult = performPatch(uri, amount)
         val status = mvcResult.response.status
 
         // then

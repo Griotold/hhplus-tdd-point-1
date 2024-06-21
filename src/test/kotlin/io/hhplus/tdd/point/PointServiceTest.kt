@@ -36,7 +36,7 @@ class PointServiceTest() {
         // then
     }
 
-    @DisplayName("id가 음수이면 IllegalArgumentException")
+    @DisplayName("id가 음수이면 InvalidUserIdException")
     @Test
     fun testTwo() {
         // given
@@ -45,7 +45,7 @@ class PointServiceTest() {
 
         // when & then
         assertThatThrownBy { pointService.charge(userId, amount) }
-            .isInstanceOf(IllegalArgumentException::class.java)
+            .isInstanceOf(InvalidUserIdException::class.java)
 
         // 예시 추가
         // given
@@ -54,7 +54,7 @@ class PointServiceTest() {
 
         // when & then
         assertThatThrownBy { pointService.charge(userId2, amount2) }
-            .isInstanceOf(IllegalArgumentException::class.java)
+            .isInstanceOf(InvalidUserIdException::class.java)
     }
 
     @DisplayName("amount가 음수이면 IllegalArgumentException")
