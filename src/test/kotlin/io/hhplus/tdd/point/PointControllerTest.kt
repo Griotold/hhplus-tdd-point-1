@@ -326,4 +326,34 @@ class PointControllerTest (
         val jsonObject: JSONObject = jsonArray.getJSONObject(0)
         assertThat(jsonObject.getString("type")).isEqualTo(TransactionType.CHARGE.name) // 충전의 enum type 은 CHARGE
     }
+
+    @DisplayName("4. 포인트 내역 - 한 번 충전, 한 번 사용하고 내역 확인")
+    @Test
+    fun testFourteen() {
+        // given
+        val id = Random.nextLong(from = 1, until = 5000)
+        val chargeUri = "/point/${id}/charge"
+        val useUri = "/point/${id}/use"
+        val chargeAmount = 5000L
+        val useAmount = 3000L
+        val uri = "/point/${id}/histories"
+
+        // 한 번 충전, 한 번 사용
+        performPatch(chargeUri, chargeAmount)
+        performPatch(useUri, useAmount)
+
+        // when
+        val mvcResult = performGet(uri)
+        val contentAsString = mvcResult.response.getContentAsString(StandardCharsets.UTF_8)
+        val status = mvcResult.response.status
+
+        // then
+        assertThat(status).isEqualTo(HttpStatus.OK.value())
+        val jsonArray = JSONArray(contentAsString)
+        assertThat(jsonArray.length()).isEqualTo(2) // 충전 1번, 사용 1번 했으니 내역은 2건
+        val jsonObject: JSONObject = jsonArray.getJSONObject(0)
+        assertThat(jsonObject.getString("type")).isEqualTo(TransactionType.CHARGE.name) // 충전의 enum type 은 CHARGE
+        val jsonObject2: JSONObject = jsonArray.getJSONObject(1)
+        assertThat(jsonObject2.getString("type")).isEqualTo(TransactionType.USE.name) // 사용의 enum type 은 USE
+    }
 }
