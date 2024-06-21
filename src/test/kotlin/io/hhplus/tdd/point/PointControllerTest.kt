@@ -22,6 +22,7 @@ class PointControllerTest (
     @Autowired private val mockMvc: MockMvc
 ){
 
+    // 중복코드 메소드로 추출하여 재사용
     private fun performPatch(uri: String, amount: Long): MvcResult {
         return mockMvc
             .perform(MockMvcRequestBuilders.patch(uri)
@@ -29,6 +30,10 @@ class PointControllerTest (
                 .contentType(MediaType.APPLICATION_JSON))
             .andReturn()
     }
+
+    /**
+     * 1. 충전하기
+     * */
 
     @DisplayName("1.충전하기 - 정상적인 상황")
     @Test
@@ -87,6 +92,26 @@ class PointControllerTest (
 
     }
 
+    /**
+     * 2. 사용하기
+     * */
+    @DisplayName("2. 사용하기 - 충전없이 사용하면 400 에러")
+    @Test
+    fun testFour() {
+        // given
+        val id = Random.nextLong(from = 1, until = 5000)
+        val uri = "/point/${id}/use"
+        val amount = Random.nextLong(from = 1, until = 5000)
+
+        // when
+        val mvcResult = performPatch(uri, amount)
+        val contentAsString = mvcResult.response.getContentAsString(StandardCharsets.UTF_8)
+        val status = mvcResult.response.status
+
+        // then
+        assertThat(status).isEqualTo(HttpStatus.BAD_REQUEST.value())
+        assertThat(JSONObject(contentAsString).getString("message")).isEqualTo("잔고가 부족합니다.")
+    }
 
 
 }

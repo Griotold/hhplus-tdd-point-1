@@ -1,5 +1,6 @@
 package io.hhplus.tdd
 
+import io.hhplus.tdd.point.InsufficientBalanceException
 import io.hhplus.tdd.point.InvalidAmountException
 import io.hhplus.tdd.point.InvalidUserIdException
 import org.slf4j.Logger
@@ -16,6 +17,9 @@ data class ErrorResponse(val code: String, val message: String)
 class ApiControllerAdvice : ResponseEntityExceptionHandler() {
     private val logger: Logger = LoggerFactory.getLogger(javaClass)
 
+    /**
+     * charge 관련 예외 처리
+     * */
     @ExceptionHandler(InvalidUserIdException::class)
     fun handleInvalidUserIdException(e: InvalidUserIdException): ResponseEntity<ErrorResponse> {
         return ResponseEntity(
@@ -31,6 +35,20 @@ class ApiControllerAdvice : ResponseEntityExceptionHandler() {
             HttpStatus.BAD_REQUEST,
         )
     }
+
+    /**
+     * use 관련 예외처리
+     * */
+    @ExceptionHandler(InsufficientBalanceException::class)
+    fun handleInsufficientBalanceException(e: InsufficientBalanceException): ResponseEntity<ErrorResponse> {
+        return ResponseEntity(
+            ErrorResponse("400", "잔고가 부족합니다."),
+            HttpStatus.BAD_REQUEST
+        )
+    }
+
+
+
 
     @ExceptionHandler(Exception::class)
     fun handleException(e: Exception): ResponseEntity<ErrorResponse> {

@@ -26,4 +26,11 @@ class PointService(
         )
     }
 
+    fun use(userId: Long, amount: Long): UserPoint {
+        val userPoint = userPointRepository.selectById(userId)
+        if (userPoint.point < amount) throw InsufficientBalanceException()
+
+        return UserPoint(id = 0, point = 0, updateMillis = 0)
+    }
+
 }
