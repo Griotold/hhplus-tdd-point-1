@@ -12,6 +12,7 @@ import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import java.util.concurrent.CompletableFuture
 import kotlin.random.Random
 
 class PointServiceTest() {
@@ -211,6 +212,37 @@ class PointServiceTest() {
         assertThat(histories).isNotEmpty
         assertThat(histories.last().amount).isEqualTo(amountToUse)
         assertThat(histories.last().type).isEqualTo(TransactionType.USE)
+    }
+
+    /**
+     * 동시성 - 여러 요청 동시에 처리
+     * */
+    @DisplayName("동시성 테스트 - 여러 요청 동시 처리")
+    @Test
+    fun testConcurrentRequests() {
+        // given
+        val userId = Random.nextLong(from = 1, until = 5000)
+
+        // when
+        // 동시에 실행하면 충전 전에 사용할 수도 있기 때문에 InsufficientBalanceException 이 발생함
+        CompletableFuture.allOf(
+            CompletableFuture.runAsync {
+                pointService.charge(userId, 1000L)
+            },
+            CompletableFuture.runAsync {
+                pointService.use(userId, 1000L)
+            },
+            CompletableFuture.runAsync {
+                pointService.charge(userId, 2000L)
+            },
+            CompletableFuture.runAsync {
+                pointService.use(userId, 2000L)
+            }
+        ).join() // 제일 오래 걸리는 작업이 끝날 때까지 기다림
+
+        // then
+        val userPoint = pointService.retrieve(userId)
+        assertThat(userPoint.point).isEqualTo(0L)
     }
 
 }
