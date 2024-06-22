@@ -18,8 +18,9 @@ class PointService(
     private val lock = ReentrantLock()
 
     fun charge(userId: Long, amount: Long): UserPoint {
-        lock.lock()
+        lock.lock() // 락을 얻음
         try {
+            // 유효성 검사
             if (userId < 0) throw InvalidUserIdException()
             if (amount < 0) throw InvalidAmountException()
 
@@ -35,14 +36,14 @@ class PointService(
                 updateMillis = afterUserPoint.updateMillis
             )
         } finally {
-            lock.unlock()
+            lock.unlock() // 락 해제
         }
-
     }
 
     fun use(userId: Long, amount: Long): UserPoint {
-        lock.lock()
+        lock.lock() // 락을 얻음
         try {
+            // 유효성 검사
             if (amount < 0) throw InvalidAmountException()
             val userPoint = userPointRepository.selectById(userId)
             if (userPoint.point < amount) throw InsufficientBalanceException()
@@ -57,7 +58,7 @@ class PointService(
                 point = afterUserPoint.point,
                 updateMillis = afterUserPoint.updateMillis)
         } finally {
-            lock.unlock()
+            lock.unlock() // 락 해제
         }
 
     }
